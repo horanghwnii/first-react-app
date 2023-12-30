@@ -2,10 +2,40 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-import App from './App.jsx';
-import './index.css';
+import Posts, { loader as postsLoader } from './routes/Posts.jsx';
 
-const router = createBrowserRouter({ path: '/', element: <App /> });
+import './index.css';
+import NewPost, { action as addPostAction } from './routes/NewPost.jsx';
+import RootLayout from './routes/RootLayout.jsx';
+import PostDetails, {
+  loader as postDetailLoader,
+} from './routes/PostDetails.jsx';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootLayout />,
+    children: [
+      {
+        path: '/',
+        element: <Posts />,
+        loader: postsLoader,
+        children: [
+          {
+            path: '/create-post',
+            element: <NewPost />,
+            action: addPostAction,
+          },
+          {
+            path: '/:id',
+            element: <PostDetails />,
+            loader: postDetailLoader,
+          },
+        ],
+      },
+    ],
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
